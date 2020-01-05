@@ -61,10 +61,6 @@ public class Pathfindingvisualizer extends Application{
 		Button reset = new Button("reset board");
 		Button clearPaths = new Button("clear paths (walls are left)");
 		Button visualizesteps = new Button("visualize steps");
-		Label label = new Label("**Cannot place start node on bordering node**"); 
-		Popup popup = new Popup(); 
-		popup.getContent().add(label); 
-		popup.setAutoHide(true); 
 		Label nopath = new Label("**All available nodes have been checked, no path was found**"); 
 		Popup popup1 = new Popup(); 
 		popup1.getContent().add(nopath);
@@ -120,6 +116,7 @@ public class Pathfindingvisualizer extends Application{
 				clearPaths.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
 						hasRun = false;
+						iter = 0;
 						clearBoard(nodeGrid);
 					}
 				});
@@ -153,12 +150,6 @@ public class Pathfindingvisualizer extends Application{
 							switch(n.nodeValue) {
 							case(0):
 								if(startset == false) {
-									if(n.row == nodeGrid.length - 1 || n.col == nodeGrid[0].length - 1 || n.row == 0 || n.col == 0) {
-										if (!popup.isShowing()) {
-											popup.show(theStage); 
-										} 
-										break;
-									}
 									startRow = n.row;
 									startCol = n.col;
 									n.nodeValue = 2;
@@ -206,7 +197,7 @@ public class Pathfindingvisualizer extends Application{
 							break;
 							case(4):
 								System.out.println("Node G cost: " + n.gcost + " Node H cost: " + n.hcost + " Node F cost: " + n.fcost);
-								System.out.println(n.row + " " + n.col);
+							System.out.println(n.row + " " + n.col);
 							break;
 							}
 						}
@@ -270,48 +261,196 @@ public class Pathfindingvisualizer extends Application{
 		System.out.println("completed in " + (endTime - startTime) + " miliseconds");
 		n[endRow][endCol].parent = null;
 	}
-
+	//examine nodes around the current node and add them to an open list, accounting for any edge cases, and disallowing the passage of the opening algorithm through two blocks placed diagonally adjacent to each other
 	public void addOpenNodes(NodeButton[][] nodeGrid, NodeButton currNode, ArrayList<NodeButton> open, ArrayList<NodeButton> closed) {
-		for(int i = currNode.row - 1; i <= currNode.row + 1; i++) {
-			for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
-				//out of bounds
-				if(currNode.row + 1 > 24 || currNode.col + 1 > 24 || currNode.row -1 < 0 || currNode.col -1 < 0) {
-					continue;
-				}
-				//if node is an un-walkable node, continue looking for nodes
-				if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
-					continue;
-				}
-				//if the node being examined is already in the open list recalculate costs if necessary
-				if(open.contains(nodeGrid[i][j])) {
-					recalculateGCosts(nodeGrid[i][j], currNode);
-					continue;
-				}
-				/*
-				if(nodeGrid[currNode.row+1][currNode.col].nodeValue == 1) {
-					System.out.println(currNode.row + " " + currNode.col);
-					System.out.println("wall above current node");
-				}
-				if(nodeGrid[currNode.row][currNode.col + 1].nodeValue == 1) {
-					System.out.println(currNode.row + " " + currNode.col);
-					System.out.println("wall to right of curr node");
-				}
-				if(nodeGrid[currNode.row-1][currNode.col].nodeValue == 1) {
-					System.out.println(currNode.row + " " + currNode.col);
-					System.out.println("wall below current node");
-				}
-				if(nodeGrid[currNode.row][currNode.col-1].nodeValue == 1) {
-					System.out.println(currNode.row + " " + currNode.col);
-					System.out.println("wall to left of current node");
-				}
-				*/
-				else {
+		ArrayList<NodeButton> unWalkable = new ArrayList<NodeButton>();
+		if(currNode.row - 1 >= 0 && currNode.col - 1 >= 0 && currNode.row + 1 <= 24 && currNode.col + 1 <= 24) {
+			if(nodeGrid[currNode.row + 1][currNode.col].nodeValue == 1 && nodeGrid[currNode.row][currNode.col + 1].nodeValue == 1) {
+				unWalkable.add(nodeGrid[currNode.row + 1][currNode.col + 1]);
+			}
+			if(nodeGrid[currNode.row + 1][currNode.col].nodeValue == 1 && nodeGrid[currNode.row][currNode.col - 1].nodeValue == 1) {
+				unWalkable.add(nodeGrid[currNode.row + 1][currNode.col - 1]);
+			}
+			if(nodeGrid[currNode.row - 1][currNode.col].nodeValue == 1 && nodeGrid[currNode.row][currNode.col + 1].nodeValue == 1) {
+				unWalkable.add(nodeGrid[currNode.row - 1][currNode.col + 1]);
+			}
+			if(nodeGrid[currNode.row - 1][currNode.col].nodeValue == 1 && nodeGrid[currNode.row][currNode.col - 1].nodeValue == 1) {
+				unWalkable.add(nodeGrid[currNode.row - 1][currNode.col - 1]);
+			}
+			for(int i = currNode.row - 1; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
+					//if node is an un-walkable node, continue looking for nodes
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					//if the node being examined is already in the open list recalculate costs if necessary
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
 					nodeGrid[i][j].parent = currNode;
 					nodeGrid[i][j].isVisited = true;
 					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
+		else if(currNode.row - 1 < 0 && currNode.col - 1 < 0) {
+			for(int i = currNode.row; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col; j <= currNode.col + 1; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.row + 1 > 24 && currNode.col +1 > 24) {
+			for(int i = currNode.row-1; i <= currNode.row; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.row + 1 > 24 && currNode.col - 1 < 0) {
+			for(int i = currNode.row - 1; i <= currNode.row; i++) {
+				for(int j = currNode.col; j <= currNode.col + 1; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.row - 1 < 0 && currNode.col + 1 > 24) {
+			for(int i = currNode.row; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.row + 1 > 24) {
+			for(int i = currNode.row - 1; i <= currNode.row; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.col + 1 > 24) {
+			for(int i = currNode.row - 1; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.row - 1 < 0) {
+			System.out.println(currNode);
+			for(int i = currNode.row; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		else if(currNode.col - 1 < 0) {
+			for(int i = currNode.row - 1; i <= currNode.row + 1; i++) {
+				for(int j = currNode.col; j <= currNode.col + 1; j++) {
+					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					if(open.contains(nodeGrid[i][j])) {
+						recalculateGCosts(nodeGrid[i][j], currNode);
+						continue;
+					}
+					if(unWalkable.contains(nodeGrid[i][j])) {
+						continue;
+					}
+					nodeGrid[i][j].parent = currNode;
+					nodeGrid[i][j].isVisited = true;
+					open.add(nodeGrid[i][j]);
+				}
+			}
+		}
+		unWalkable.clear();
 	}
 	//Assign an F cost to each open node F cost is the sum of the G cost (distance from start) and the H cost (distance to end) 
 	public ArrayList<NodeButton> assignCosts(NodeButton[][] n, NodeButton currNode, ArrayList<NodeButton> open) {
@@ -352,7 +491,7 @@ public class Pathfindingvisualizer extends Application{
 		}
 		return open;
 	}
-	
+
 	public void animateAstar(ArrayList<NodeButton> open, ArrayList<NodeButton> closed, NodeButton[][] n) {
 		for(NodeButton i:open) {
 			if(i.nodeValue != 2 && i.nodeValue!= 3) {
@@ -410,7 +549,7 @@ public class Pathfindingvisualizer extends Application{
 			currNode.setGraphic(currNode.path);
 
 	}
-	
+
 	public void clearBoard(NodeButton[][] nodeGrid) {
 		for(int row = 0; row < gridHeight; row++) {
 			for(int col = 0; col < gridWidth; col++) {
