@@ -46,6 +46,7 @@ public class Pathfindingvisualizer extends Application{
 	boolean endset = true;
 	boolean startset = true;
 	boolean hasRun = false;
+	boolean noPath = false;
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -87,7 +88,11 @@ public class Pathfindingvisualizer extends Application{
 				}
 				visualize.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
+						clearBoard(nodeGrid);
 						Astar(nodeGrid, nodeGrid[startRow][startCol]);
+						if(noPath == true) {
+							popup1.show(theStage);
+						}
 					}
 
 				});
@@ -99,6 +104,7 @@ public class Pathfindingvisualizer extends Application{
 				});
 				reset.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
+						noPath = false;
 						hasRun = false;
 						iter = 0;
 						for(int row = 0; row < gridHeight; row++) {
@@ -115,6 +121,7 @@ public class Pathfindingvisualizer extends Application{
 				});
 				clearPaths.setOnMouseClicked(new EventHandler<MouseEvent>() {
 					public void handle(MouseEvent event) {
+						noPath = false;
 						hasRun = false;
 						iter = 0;
 						clearBoard(nodeGrid);
@@ -227,6 +234,7 @@ public class Pathfindingvisualizer extends Application{
 			Collections.sort(open);
 			if(open.size() == 1) {
 				System.out.println("open empty");
+				noPath = true;
 				break;
 			}
 			currNode = open.get(0);
@@ -249,6 +257,7 @@ public class Pathfindingvisualizer extends Application{
 			Collections.sort(open);
 			if(open.size() == 1) {
 				System.out.println("open empty");
+				noPath = true;
 				break;
 			}
 			currNode = open.get(0);
