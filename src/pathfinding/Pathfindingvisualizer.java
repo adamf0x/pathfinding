@@ -225,7 +225,7 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			if(open.size() == 0) {
+			if(open.size() == 1) {
 				System.out.println("open empty");
 				break;
 			}
@@ -247,7 +247,7 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			if(open.size() == 0) {
+			if(open.size() == 1) {
 				System.out.println("open empty");
 				break;
 			}
