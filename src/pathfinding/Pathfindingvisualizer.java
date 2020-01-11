@@ -244,6 +244,7 @@ public class Pathfindingvisualizer extends Application{
 	}
 	public void Astar(NodeButton[][] n, NodeButton currNode) {
 		hasRun = true;
+		int count = 0;
 		long startTime = System.currentTimeMillis();
 		ArrayList<NodeButton> open = new ArrayList<NodeButton>();
 		ArrayList<NodeButton> closed = new ArrayList<NodeButton>();
@@ -255,13 +256,14 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			if(open.size() == 1) {
+			if(count > 0 && open.size() == 1) {
 				System.out.println("open empty");
 				noPath = true;
 				break;
 			}
 			currNode = open.get(0);
 			animateAstar(open, closed, n);
+			count++;
 		}
 		if(open.contains(n[endRow][endCol])) {
 			System.out.println("found end node");
@@ -421,7 +423,6 @@ public class Pathfindingvisualizer extends Application{
 			}
 		}
 		else if(currNode.row - 1 < 0) {
-			System.out.println(currNode);
 			for(int i = currNode.row; i <= currNode.row + 1; i++) {
 				for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
