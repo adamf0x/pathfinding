@@ -248,7 +248,6 @@ public class Pathfindingvisualizer extends Application{
 		long startTime = System.currentTimeMillis();
 		ArrayList<NodeButton> open = new ArrayList<NodeButton>();
 		ArrayList<NodeButton> closed = new ArrayList<NodeButton>();
-		ArrayList<NodeButton> path = new ArrayList<NodeButton>();
 		while(!open.contains(n[endRow][endCol])){
 			open.add(currNode);
 			addOpenNodes(n, currNode, open, closed);
