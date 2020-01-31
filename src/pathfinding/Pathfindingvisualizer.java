@@ -232,11 +232,13 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
+			/*
 			if(open.size() == 1) {
 				System.out.println("open empty");
 				noPath = true;
 				break;
 			}
+			*/
 			currNode = open.get(0);
 		}
 		animateAstarSteps(open, closed, n, currNode);
@@ -250,19 +252,22 @@ public class Pathfindingvisualizer extends Application{
 		ArrayList<NodeButton> closed = new ArrayList<NodeButton>();
 		while(!open.contains(n[endRow][endCol])){
 			open.add(currNode);
+			System.out.println(currNode);
 			addOpenNodes(n, currNode, open, closed);
 			closed.add(currNode);
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			if(count > 0 && open.size() == 1) {
+			/*
+			if(count > 0 && open.size() <= 1) {
 				System.out.println("open empty");
 				noPath = true;
 				break;
 			}
+			*/
+			count++;
 			currNode = open.get(0);
 			animateAstar(open, closed, n);
-			count++;
 		}
 		if(open.contains(n[endRow][endCol])) {
 			System.out.println("found end node");
@@ -271,7 +276,7 @@ public class Pathfindingvisualizer extends Application{
 		System.out.println("completed in " + (endTime - startTime) + " miliseconds");
 		n[endRow][endCol].parent = null;
 	}
-	//examine nodes around the current node and add them to an open list, accounting for any edge cases, and disallowing the passage of the opening algorithm through two blocks placed diagonally adjacent to each other
+	//examine nodes around the current node and add them to an open list, accounting for any edge cases, and disallowing the passage of the algorithm through two blocks placed diagonally adjacent to each other
 	public void addOpenNodes(NodeButton[][] nodeGrid, NodeButton currNode, ArrayList<NodeButton> open, ArrayList<NodeButton> closed) {
 		ArrayList<NodeButton> unWalkable = new ArrayList<NodeButton>();
 		if(currNode.row - 1 >= 0 && currNode.col - 1 >= 0 && currNode.row + 1 <= 24 && currNode.col + 1 <= 24) {
@@ -304,6 +309,7 @@ public class Pathfindingvisualizer extends Application{
 					nodeGrid[i][j].parent = currNode;
 					nodeGrid[i][j].isVisited = true;
 					open.add(nodeGrid[i][j]);
+					System.out.println("added open node " + nodeGrid[i][j]);
 				}
 			}
 		}
