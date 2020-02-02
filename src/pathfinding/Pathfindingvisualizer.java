@@ -238,7 +238,7 @@ public class Pathfindingvisualizer extends Application{
 				noPath = true;
 				break;
 			}
-			*/
+			 */
 			currNode = open.get(0);
 		}
 		animateAstarSteps(open, closed, n, currNode);
@@ -247,28 +247,30 @@ public class Pathfindingvisualizer extends Application{
 	public void Astar(NodeButton[][] n, NodeButton currNode) {
 		hasRun = true;
 		int count = 0;
+		int oneOpenCount = 0;
 		long startTime = System.currentTimeMillis();
 		ArrayList<NodeButton> open = new ArrayList<NodeButton>();
 		ArrayList<NodeButton> closed = new ArrayList<NodeButton>();
 		while(!open.contains(n[endRow][endCol])){
 			open.add(currNode);
-			System.out.println(currNode);
 			addOpenNodes(n, currNode, open, closed);
 			closed.add(currNode);
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			/*
 			if(count > 0 && open.size() <= 1) {
-				System.out.println("open empty");
-				noPath = true;
-				break;
+				oneOpenCount++;
+				System.out.println(oneOpenCount);
+				if(oneOpenCount > 0) {				
+					System.out.println("open empty");
+					noPath = true;
+					break;
+				}
 			}
-			*/
 			count++;
 			currNode = open.get(0);
-			animateAstar(open, closed, n);
 		}
+		animateAstar(open, closed, n);
 		if(open.contains(n[endRow][endCol])) {
 			System.out.println("found end node");
 		}
@@ -504,6 +506,7 @@ public class Pathfindingvisualizer extends Application{
 				open.remove(open.get(i));
 			}
 		}
+		System.out.println("Removed node");
 		return open;
 	}
 
@@ -524,7 +527,6 @@ public class Pathfindingvisualizer extends Application{
 		NodeButton pathStart = endNode.parent;
 		if(endNode.parent!= null) {
 			pathStart.setGraphic(pathStart.path);
-
 		}
 		for(int i = closed.size() - 1; i > 0; i++) {
 			NodeButton pathNode = closed.get(i);

@@ -23,7 +23,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
-public class NodeButton extends Button implements Comparable<NodeButton>{
+class NodeButton extends Button implements Comparable<NodeButton>{
 	int row = 0;
 	int col = 0;
 	int nodeValue = 0;
