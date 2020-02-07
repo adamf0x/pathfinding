@@ -232,13 +232,6 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			/*
-			if(open.size() == 1) {
-				System.out.println("open empty");
-				noPath = true;
-				break;
-			}
-			 */
 			currNode = open.get(0);
 		}
 		animateAstarSteps(open, closed, n, currNode);
@@ -246,8 +239,6 @@ public class Pathfindingvisualizer extends Application{
 	}
 	public void Astar(NodeButton[][] n, NodeButton currNode) {
 		hasRun = true;
-		int count = 0;
-		int oneOpenCount = 0;
 		long startTime = System.currentTimeMillis();
 		ArrayList<NodeButton> open = new ArrayList<NodeButton>();
 		ArrayList<NodeButton> closed = new ArrayList<NodeButton>();
@@ -258,16 +249,11 @@ public class Pathfindingvisualizer extends Application{
 			open = removeNodes(open, currNode);
 			assignCosts(n, currNode, open);
 			Collections.sort(open);
-			if(count > 0 && open.size() <= 1) {
-				oneOpenCount++;
-				System.out.println(oneOpenCount);
-				if(oneOpenCount > 0) {				
-					System.out.println("open empty");
-					noPath = true;
-					break;
-				}
+			if(currNode == open.get(0) && open.size() == 1) {
+				System.out.println("could not reach end node");
+				noPath = true;
+				break;
 			}
-			count++;
 			currNode = open.get(0);
 		}
 		animateAstar(open, closed, n);
@@ -277,6 +263,11 @@ public class Pathfindingvisualizer extends Application{
 		long endTime = System.currentTimeMillis();
 		System.out.println("completed in " + (endTime - startTime) + " miliseconds");
 		n[endRow][endCol].parent = null;
+		for(int i = 0; i < n.length; i++) {
+			for(int j = 0; j < n[0].length; j++) {
+				n[i][j].isVisited = false;
+			}
+		}
 	}
 	//examine nodes around the current node and add them to an open list, accounting for any edge cases, and disallowing the passage of the algorithm through two blocks placed diagonally adjacent to each other
 	public void addOpenNodes(NodeButton[][] nodeGrid, NodeButton currNode, ArrayList<NodeButton> open, ArrayList<NodeButton> closed) {
@@ -309,9 +300,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
-					System.out.println("added open node " + nodeGrid[i][j]);
 				}
 			}
 		}
@@ -329,8 +321,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -348,8 +342,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -367,8 +363,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -386,8 +384,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -405,8 +405,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -424,8 +426,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -443,8 +447,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -462,8 +468,10 @@ public class Pathfindingvisualizer extends Application{
 						continue;
 					}
 					nodeGrid[i][j].parent = currNode;
+					if(nodeGrid[i][j].isVisited == false) {
+						open.add(nodeGrid[i][j]);
+					}
 					nodeGrid[i][j].isVisited = true;
-					open.add(nodeGrid[i][j]);
 				}
 			}
 		}
@@ -506,7 +514,6 @@ public class Pathfindingvisualizer extends Application{
 				open.remove(open.get(i));
 			}
 		}
-		System.out.println("Removed node");
 		return open;
 	}
 

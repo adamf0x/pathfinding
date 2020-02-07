@@ -47,18 +47,18 @@ class NodeButton extends Button implements Comparable<NodeButton>{
 		setMaxWidth(size);
 		setMinHeight(size);
 		setMaxHeight(size);
-		nodeCover.setFitWidth(size -2);
-		nodeCover.setFitHeight(size -2);
-		wallCover.setFitWidth(size -2);
-		wallCover.setFitHeight(size -2);
-		start.setFitWidth(size -2);
-		start.setFitHeight(size -2);
-		goal.setFitWidth(size -2);
-		goal.setFitHeight(size -2);
-		checked.setFitWidth(size -2);
-		checked.setFitHeight(size -2);
-		path.setFitWidth(size -2);
-		path.setFitHeight(size -2);
+		nodeCover.setFitWidth(size-1);
+		nodeCover.setFitHeight(size-1);
+		wallCover.setFitWidth(size-1);
+		wallCover.setFitHeight(size-1);
+		start.setFitWidth(size-1);
+		start.setFitHeight(size-1);
+		goal.setFitWidth(size-1);
+		goal.setFitHeight(size-1);
+		checked.setFitWidth(size-1);
+		checked.setFitHeight(size-1);
+		path.setFitWidth(size-1);
+		path.setFitHeight(size-1);
 		setGraphic(nodeCover);	
 	}
 	@Override
