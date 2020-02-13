@@ -42,7 +42,7 @@ class NodeButton extends Button implements Comparable<NodeButton>{
 		this.row = row;
 		this.col = col;
 		this.nodeValue = nodeValue;
-		double size = 30;
+		double size = 25;
 		setMinWidth(size); 
 		setMaxWidth(size);
 		setMinHeight(size);

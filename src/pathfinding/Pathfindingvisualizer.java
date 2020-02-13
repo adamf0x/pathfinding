@@ -32,8 +32,8 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class Pathfindingvisualizer extends Application{
-	static int gridHeight = 25;
-	static int gridWidth = 25;
+	static int gridHeight = 30;
+	static int gridWidth = 30;
 	int startRow = 10;
 	int startCol = 5;
 	int endRow = 10;
@@ -236,6 +236,11 @@ public class Pathfindingvisualizer extends Application{
 		}
 		animateAstarSteps(open, closed, n, currNode);
 		n[endRow][endCol].parent = null;
+		for(int i = 0; i < n.length; i++) {
+			for(int j = 0; j < n[0].length; j++) {
+				n[i][j].isVisited = false;
+			}
+		}
 	}
 	public void Astar(NodeButton[][] n, NodeButton currNode) {
 		hasRun = true;
@@ -272,7 +277,7 @@ public class Pathfindingvisualizer extends Application{
 	//examine nodes around the current node and add them to an open list, accounting for any edge cases, and disallowing the passage of the algorithm through two blocks placed diagonally adjacent to each other
 	public void addOpenNodes(NodeButton[][] nodeGrid, NodeButton currNode, ArrayList<NodeButton> open, ArrayList<NodeButton> closed) {
 		ArrayList<NodeButton> unWalkable = new ArrayList<NodeButton>();
-		if(currNode.row - 1 >= 0 && currNode.col - 1 >= 0 && currNode.row + 1 <= 24 && currNode.col + 1 <= 24) {
+		if(currNode.row - 1 >= 0 && currNode.col - 1 >= 0 && currNode.row + 1 <= nodeGrid.length-1 && currNode.col + 1 <= nodeGrid.length -1) {
 			if(nodeGrid[currNode.row + 1][currNode.col].nodeValue == 1 && nodeGrid[currNode.row][currNode.col + 1].nodeValue == 1) {
 				unWalkable.add(nodeGrid[currNode.row + 1][currNode.col + 1]);
 			}
@@ -328,7 +333,7 @@ public class Pathfindingvisualizer extends Application{
 				}
 			}
 		}
-		else if(currNode.row + 1 > 24 && currNode.col +1 > 24) {
+		else if(currNode.row + 1 > nodeGrid.length - 1 && currNode.col +1 > nodeGrid.length - 1) {
 			for(int i = currNode.row-1; i <= currNode.row; i++) {
 				for(int j = currNode.col - 1; j <= currNode.col; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
@@ -349,7 +354,7 @@ public class Pathfindingvisualizer extends Application{
 				}
 			}
 		}
-		else if(currNode.row + 1 > 24 && currNode.col - 1 < 0) {
+		else if(currNode.row + 1 > nodeGrid.length - 1 && currNode.col - 1 < 0) {
 			for(int i = currNode.row - 1; i <= currNode.row; i++) {
 				for(int j = currNode.col; j <= currNode.col + 1; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
@@ -370,7 +375,7 @@ public class Pathfindingvisualizer extends Application{
 				}
 			}
 		}
-		else if(currNode.row - 1 < 0 && currNode.col + 1 > 24) {
+		else if(currNode.row - 1 < 0 && currNode.col + 1 > nodeGrid.length - 1) {
 			for(int i = currNode.row; i <= currNode.row + 1; i++) {
 				for(int j = currNode.col - 1; j <= currNode.col; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
@@ -391,7 +396,7 @@ public class Pathfindingvisualizer extends Application{
 				}
 			}
 		}
-		else if(currNode.row + 1 > 24) {
+		else if(currNode.row + 1 > nodeGrid.length - 1) {
 			for(int i = currNode.row - 1; i <= currNode.row; i++) {
 				for(int j = currNode.col - 1; j <= currNode.col + 1; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
@@ -412,7 +417,7 @@ public class Pathfindingvisualizer extends Application{
 				}
 			}
 		}
-		else if(currNode.col + 1 > 24) {
+		else if(currNode.col + 1 > nodeGrid.length - 1) {
 			for(int i = currNode.row - 1; i <= currNode.row + 1; i++) {
 				for(int j = currNode.col - 1; j <= currNode.col; j++) {
 					if(nodeGrid[i][j].nodeValue == 1 || nodeGrid[i][j] == currNode || closed.contains(nodeGrid[i][j])) {
